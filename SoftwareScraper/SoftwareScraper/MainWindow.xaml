@@ -7,8 +7,8 @@ A copy of the GNU General Public License v3.0 can be found at http://www.gnu.org
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SoftwareScraper"
         mc:Ignorable="d"
-        Title="Software Scraper" Height="110.833" Width="304.792" Icon="SoftwareScraperIcon.ico">
+        Title="Software Scraper v0.1.0" Height="110.833" Width="338.334" Icon="SoftwareScraperIcon.ico">
     <Grid>
-        <Button x:Name="button" Content="Save Software Info" HorizontalAlignment="Center" Margin="90,21,88.4,32.6" VerticalAlignment="Center" Click="Button_Click" Width="120" Height="28" Padding="2"/>
+        <Button x:Name="button" Content="Save Software Info" HorizontalAlignment="Center" Margin="111,21,101,32.6" VerticalAlignment="Center" Click="Button_Click" Width="120" Height="28" Padding="2"/>
     </Grid>
 </Window>
