@@ -1,4 +1,7 @@
-﻿using Microsoft.Win32;
+﻿// This code is under the terms of the GNU General Public License v3.0 as published by the Free Software Foundation. 
+// A copy of the GNU General Public License v3.0 can be found at http://www.gnu.org/licenses/.
+
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -16,6 +19,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Diagnostics;
 using Excel = Microsoft.Office.Interop.Excel;
+using System.IO;
 
 namespace SoftwareScraper
 {
@@ -50,7 +54,18 @@ namespace SoftwareScraper
                             // Copy over registry values to DataTable
                             if (!String.IsNullOrEmpty(sk.GetValue("DisplayName").ToString()))
                             {
-                                dt.Rows.Add(sk.GetValue("DisplayName"), sk.GetValue("EstimatedSize"));
+                                dt.Rows.Add(sk.GetValue("DisplayName"),
+                                    sk.GetValue("DisplayVersion"),
+                                    sk.GetValue("Publisher"),
+                                    sk.GetValue("VersionMajor"),
+                                    sk.GetValue("VersionMinor"),
+                                    sk.GetValue("Version"),
+                                    sk.GetValue("InstallDate"),
+                                    sk.GetValue("InstallLocation"),
+                                    sk.GetValue("InstallSource"),
+                                    sk.GetValue("EstimatedSize"),
+                                    sk.GetValue("Readme"),
+                                    sk.GetValue("UninstallString"));
                             }
                         }
                         catch (Exception ex)
@@ -67,17 +82,14 @@ namespace SoftwareScraper
                 // Create the Excel .xlsx file
                 try
                 {
-                    string excelFilename = @"C:\Users\scott\Desktop\Sample.xlsx";
-                    ExportDataSet(ds, excelFilename);
+                    ExportDataSet(ds);
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show("Couldn't create Excel file.\r\nException: " + ex.Message);
+
                     return;
                 }
-
-                //label1.Text += " (" + lstDisplayHardware.Items.Count.ToString() + ")";
-
             }
         }
 
@@ -86,12 +98,22 @@ namespace SoftwareScraper
             // Initialize DataTable
             System.Data.DataTable dt = new System.Data.DataTable("Installed Software");
             dt.Columns.Add("DisplayName");
+            dt.Columns.Add("DisplayVersion");
+            dt.Columns.Add("Publisher");
+            dt.Columns.Add("VersionMajor");
+            dt.Columns.Add("VersionMinor");
+            dt.Columns.Add("Version");
+            dt.Columns.Add("InstallDate");
+            dt.Columns.Add("InstallLocation");
+            dt.Columns.Add("InstallSource");
             dt.Columns.Add("EstimatedSize");
-
+            dt.Columns.Add("Readme");
+            dt.Columns.Add("UninstallString");
+            
             return dt;
         }
 
-        private static void ExportDataSet(DataSet ds, string destination)
+        private static void ExportDataSet(DataSet ds)
         {
             var workbook = new ClosedXML.Excel.XLWorkbook();
             foreach (DataTable dt in ds.Tables)
@@ -100,8 +122,14 @@ namespace SoftwareScraper
                 worksheet.Cell(1, 1).InsertTable(dt);
                 worksheet.Columns().AdjustToContents();
             }
-            workbook.SaveAs(destination);
-            workbook.Dispose();
+
+            SaveFileDialog sFD = new SaveFileDialog();
+            sFD.Filter = "Excel file (.xlsx)|*.xlsx";
+            if (sFD.ShowDialog() == true)
+            {
+                workbook.SaveAs(sFD.FileName);
+                workbook.Dispose();
+            }        
         }
     }
 }
